@@ -11,9 +11,18 @@ import { Asset } from 'expo-asset';
 
 const MAX_HP = 100;
 
+function resolveAssetUri(source: any) {
+    if (!source) return source;
+    if (typeof source === 'object' && source.uri) return source.uri;
+    if (typeof source === 'number' || (typeof source === 'string' && !source.startsWith('http') && !source.startsWith('data:') && !source.startsWith('/'))) {
+        return Asset.fromModule(source).uri || source;
+    }
+    return source;
+}
+
 function ModelViewer({ modelSource, texSource, scale = 1, position = [0, -1, 0], flip = false }: { modelSource: any, texSource?: any, scale?: number, position?: [number, number, number], flip?: boolean }) {
-    const resolvedModel = typeof modelSource === 'number' ? Asset.fromModule(modelSource).uri : modelSource;
-    const resolvedTex = typeof texSource === 'number' ? Asset.fromModule(texSource).uri : texSource;
+    const resolvedModel = resolveAssetUri(modelSource);
+    const resolvedTex = resolveAssetUri(texSource);
 
     const gltf = useGLTF(resolvedModel as string) as any;
     const groupRef = useRef<any>(null);
