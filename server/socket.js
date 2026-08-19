@@ -5,7 +5,7 @@ let io;
 const initSocket = (httpServer) => {
     io = new Server(httpServer, {
         cors: {
-            origin: ["http://localhost:5173", "http://localhost:5174"], // Allow both hosts
+            origin: "*", // Allow all origins (Vercel + Local)
             methods: ["GET", "POST"]
         }
     });
