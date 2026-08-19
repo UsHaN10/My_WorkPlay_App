@@ -192,3 +192,57 @@
   "parameters": {}
 }
 ----------------
+2026-08-18T18:46:07.103Z: {
+  "stack": "Error\n    at Database.<anonymous> (C:\\New partition\\project\\WorkPlay\\server\\node_modules\\sequelize\\lib\\dialects\\sqlite\\query.js:185:27)\n    at C:\\New partition\\project\\WorkPlay\\server\\node_modules\\sequelize\\lib\\dialects\\sqlite\\query.js:183:50\n    at new Promise (<anonymous>)\n    at Query.run (C:\\New partition\\project\\WorkPlay\\server\\node_modules\\sequelize\\lib\\dialects\\sqlite\\query.js:183:12)\n    at C:\\New partition\\project\\WorkPlay\\server\\node_modules\\sequelize\\lib\\sequelize.js:315:28\n    at async SQLiteQueryInterface.insert (C:\\New partition\\project\\WorkPlay\\server\\node_modules\\sequelize\\lib\\dialects\\abstract\\query-interface.js:308:21)\n    at async model.save (C:\\New partition\\project\\WorkPlay\\server\\node_modules\\sequelize\\lib\\model.js:2490:35)\n    at async User.create (C:\\New partition\\project\\WorkPlay\\server\\node_modules\\sequelize\\lib\\model.js:1362:12)\n    at async C:\\New partition\\project\\WorkPlay\\server\\routes\\auth.js:33:22",
+  "message": "Validation error",
+  "name": "SequelizeUniqueConstraintError",
+  "errors": [
+    {
+      "message": "username must be unique"
+    }
+  ],
+  "parent": {
+    "stack": "Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.username",
+    "message": "SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.username",
+    "name": "Error",
+    "sql": "INSERT INTO `Users` (`id`,`username`,`password`,`role`,`isVIP`,`fullName`,`email`,`department`,`jobRole`,`rank`,`xp`,`coins`,`sp`,`skillLevels`,`createdAt`,`updatedAt`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15);"
+  },
+  "original": {
+    "stack": "Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.username",
+    "message": "SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.username",
+    "name": "Error",
+    "sql": "INSERT INTO `Users` (`id`,`username`,`password`,`role`,`isVIP`,`fullName`,`email`,`department`,`jobRole`,`rank`,`xp`,`coins`,`sp`,`skillLevels`,`createdAt`,`updatedAt`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15);"
+  },
+  "fields": [
+    "username"
+  ],
+  "sql": "INSERT INTO `Users` (`id`,`username`,`password`,`role`,`isVIP`,`fullName`,`email`,`department`,`jobRole`,`rank`,`xp`,`coins`,`sp`,`skillLevels`,`createdAt`,`updatedAt`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15);"
+}
+----------------
+2026-08-18T18:46:15.578Z: {
+  "stack": "Error\n    at Database.<anonymous> (C:\\New partition\\project\\WorkPlay\\server\\node_modules\\sequelize\\lib\\dialects\\sqlite\\query.js:185:27)\n    at C:\\New partition\\project\\WorkPlay\\server\\node_modules\\sequelize\\lib\\dialects\\sqlite\\query.js:183:50\n    at new Promise (<anonymous>)\n    at Query.run (C:\\New partition\\project\\WorkPlay\\server\\node_modules\\sequelize\\lib\\dialects\\sqlite\\query.js:183:12)\n    at C:\\New partition\\project\\WorkPlay\\server\\node_modules\\sequelize\\lib\\sequelize.js:315:28\n    at async SQLiteQueryInterface.insert (C:\\New partition\\project\\WorkPlay\\server\\node_modules\\sequelize\\lib\\dialects\\abstract\\query-interface.js:308:21)\n    at async model.save (C:\\New partition\\project\\WorkPlay\\server\\node_modules\\sequelize\\lib\\model.js:2490:35)\n    at async User.create (C:\\New partition\\project\\WorkPlay\\server\\node_modules\\sequelize\\lib\\model.js:1362:12)\n    at async C:\\New partition\\project\\WorkPlay\\server\\routes\\auth.js:33:22",
+  "message": "Validation error",
+  "name": "SequelizeUniqueConstraintError",
+  "errors": [
+    {
+      "message": "username must be unique"
+    }
+  ],
+  "parent": {
+    "stack": "Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.username",
+    "message": "SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.username",
+    "name": "Error",
+    "sql": "INSERT INTO `Users` (`id`,`username`,`password`,`role`,`isVIP`,`fullName`,`email`,`department`,`jobRole`,`rank`,`xp`,`coins`,`sp`,`skillLevels`,`createdAt`,`updatedAt`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15);"
+  },
+  "original": {
+    "stack": "Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.username",
+    "message": "SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.username",
+    "name": "Error",
+    "sql": "INSERT INTO `Users` (`id`,`username`,`password`,`role`,`isVIP`,`fullName`,`email`,`department`,`jobRole`,`rank`,`xp`,`coins`,`sp`,`skillLevels`,`createdAt`,`updatedAt`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15);"
+  },
+  "fields": [
+    "username"
+  ],
+  "sql": "INSERT INTO `Users` (`id`,`username`,`password`,`role`,`isVIP`,`fullName`,`email`,`department`,`jobRole`,`rank`,`xp`,`coins`,`sp`,`skillLevels`,`createdAt`,`updatedAt`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15);"
+}
+----------------

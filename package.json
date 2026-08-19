@@ -4,11 +4,10 @@
     "description": "Industrial Gamification Platform",
     "private": true,
     "scripts": {
-        "install-all": "npm install --prefix client && npm install --prefix server",
-        "dev:worker": "npm run dev:worker --prefix client",
-        "dev:admin": "npm run dev:admin --prefix client",
+        "install-all": "npm install --prefix mobile && npm install --prefix server",
+        "dev:mobile": "npm start --prefix mobile",
         "dev:server": "npm run dev --prefix server",
-        "dev": "concurrently \"npm run dev:worker\" \"npm run dev:admin\" \"npm run dev:server\""
+        "dev": "concurrently \"npm run dev:server\" \"npm run dev:mobile\""
     },
     "devDependencies": {
         "concurrently": "^8.2.2"
