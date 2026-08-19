@@ -154,17 +154,19 @@ export default function WorkerDashboardScreen() {
       <View style={styles.header}>
         <Text style={styles.greeting}>Hello, {profile?.fullName || user?.username}</Text>
         <Text style={styles.subtitle}>{profile?.department} Department  •  LV {currentLevel}</Text>
-        <View style={{ flexDirection: 'row', gap: 10, marginTop: 12 }}>
-          <TouchableOpacity style={styles.spinTrigger} onPress={() => router.push('/spin')}>
-            <Text style={styles.spinTriggerText}>Daily Spin</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.spinTrigger, { backgroundColor: '#ef4444' }]} onPress={() => router.push(('/matchmaking?gameType=arena' as any))}>
-            <Text style={[styles.spinTriggerText, { color: '#fff' }]}>Enter Arena ⚔️</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.spinTrigger, { backgroundColor: '#8b5cf6' }]} onPress={() => router.push(('/matchmaking?gameType=pvp-pong' as any))}>
-            <Text style={[styles.spinTriggerText, { color: '#fff' }]}>Online Pong 🏓</Text>
-          </TouchableOpacity>
-        </View>
+        {user?.role !== 'admin' && (
+          <View style={{ flexDirection: 'row', gap: 10, marginTop: 12 }}>
+            <TouchableOpacity style={styles.spinTrigger} onPress={() => router.push('/spin')}>
+              <Text style={styles.spinTriggerText}>Daily Spin</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.spinTrigger, { backgroundColor: '#ef4444' }]} onPress={() => router.push(('/matchmaking?gameType=arena' as any))}>
+              <Text style={[styles.spinTriggerText, { color: '#fff' }]}>Enter Arena ⚔️</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.spinTrigger, { backgroundColor: '#8b5cf6' }]} onPress={() => router.push(('/matchmaking?gameType=pvp-pong' as any))}>
+              <Text style={[styles.spinTriggerText, { color: '#fff' }]}>Online Pong 🏓</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
 
       <View style={styles.statsContainer}>
@@ -191,53 +193,55 @@ export default function WorkerDashboardScreen() {
       </View>
 
       <View style={styles.section}>
-        <View style={styles.companionsContainer}>
-          <Text style={styles.sectionTitle}>Companions & Avatars (3D)</Text>
-          <View style={styles.companionCard}>
-            <View style={styles.companionRow}>
-              <View style={styles.petBox}>
-                <View style={styles.canvasWrapper}>
-                  <Canvas>
-                    <ambientLight intensity={1.5} />
-                    <directionalLight position={[10, 10, 5]} intensity={2} />
-                    <Suspense fallback={null}>
-                      <ModelViewer modelSource={activePet.model} texSource={require('../../kenney_cube-pets_1.0/Models/GLB format/Textures/colormap.png')} scale={activePet.scale} position={[0, activePet.y, 0]} />
-                      <OrbitControls makeDefault enablePan={false} enableZoom={false} minPolarAngle={Math.PI / 2} maxPolarAngle={Math.PI / 2} autoRotate autoRotateSpeed={2} />
-                    </Suspense>
-                  </Canvas>
+        {user?.role !== 'admin' && (
+          <View style={styles.companionsContainer}>
+            <Text style={styles.sectionTitle}>Companions & Avatars (3D)</Text>
+            <View style={styles.companionCard}>
+              <View style={styles.companionRow}>
+                <View style={styles.petBox}>
+                  <View style={styles.canvasWrapper}>
+                    <Canvas>
+                      <ambientLight intensity={1.5} />
+                      <directionalLight position={[10, 10, 5]} intensity={2} />
+                      <Suspense fallback={null}>
+                        <ModelViewer modelSource={activePet.model} texSource={require('../../kenney_cube-pets_1.0/Models/GLB format/Textures/colormap.png')} scale={activePet.scale} position={[0, activePet.y, 0]} />
+                        <OrbitControls makeDefault enablePan={false} enableZoom={false} minPolarAngle={Math.PI / 2} maxPolarAngle={Math.PI / 2} autoRotate autoRotateSpeed={2} />
+                      </Suspense>
+                    </Canvas>
+                  </View>
+                  <Text style={styles.petName}>{activePet.name}</Text>
+                  <Text style={styles.petLevelLabel}>LV {activePet.level} Unlock</Text>
                 </View>
-                <Text style={styles.petName}>{activePet.name}</Text>
-                <Text style={styles.petLevelLabel}>LV {activePet.level} Unlock</Text>
-              </View>
 
-              <View style={styles.avatarBox}>
-                <View style={styles.canvasWrapperBig}>
-                  <Canvas camera={{ position: [0, 1.2, 8], fov: 45 }}>
-                    <ambientLight intensity={1.5} />
-                    <directionalLight position={[10, 15, 10]} intensity={3} />
-                    <Suspense fallback={null}>
-                      <ModelViewer modelSource={activeChar.model} texSource={require('../../KayKit_Adventurers_2.0_FREE/KayKit_Adventurers_2.0_FREE/Characters/gltf/Textures/colormap.png')} scale={activeChar.scale} position={[0, activeChar.y, 0]} />
-                      <OrbitControls makeDefault enablePan={false} enableZoom={false} minPolarAngle={Math.PI / 2} maxPolarAngle={Math.PI / 2} autoRotate autoRotateSpeed={2} />
-                    </Suspense>
-                  </Canvas>
+                <View style={styles.avatarBox}>
+                  <View style={styles.canvasWrapperBig}>
+                    <Canvas camera={{ position: [0, 1.2, 8], fov: 45 }}>
+                      <ambientLight intensity={1.5} />
+                      <directionalLight position={[10, 15, 10]} intensity={3} />
+                      <Suspense fallback={null}>
+                        <ModelViewer modelSource={activeChar.model} texSource={require('../../KayKit_Adventurers_2.0_FREE/KayKit_Adventurers_2.0_FREE/Characters/gltf/Textures/colormap.png')} scale={activeChar.scale} position={[0, activeChar.y, 0]} />
+                        <OrbitControls makeDefault enablePan={false} enableZoom={false} minPolarAngle={Math.PI / 2} maxPolarAngle={Math.PI / 2} autoRotate autoRotateSpeed={2} />
+                      </Suspense>
+                    </Canvas>
+                  </View>
+                  <Text style={styles.petName}>{activeChar.name}</Text>
+                  <Text style={styles.petLevelLabel}>LV {activeChar.level} Unlock</Text>
                 </View>
-                <Text style={styles.petName}>{activeChar.name}</Text>
-                <Text style={styles.petLevelLabel}>LV {activeChar.level} Unlock</Text>
               </View>
+              {nextPet ? (
+                <View style={styles.nextUnlockRow}>
+                  <Star size={14} color="#f59e0b" />
+                  <Text style={styles.nextUnlockText}>Next Pet at LV {nextPet.level}</Text>
+                </View>
+              ) : (
+                <View style={styles.nextUnlockRow}>
+                  <Trophy size={14} color="#10b981" />
+                  <Text style={[styles.nextUnlockText, { color: '#10b981' }]}>All Pets Unlocked!</Text>
+                </View>
+              )}
             </View>
-            {nextPet ? (
-              <View style={styles.nextUnlockRow}>
-                <Star size={14} color="#f59e0b" />
-                <Text style={styles.nextUnlockText}>Next Pet at LV {nextPet.level}</Text>
-              </View>
-            ) : (
-              <View style={styles.nextUnlockRow}>
-                <Trophy size={14} color="#10b981" />
-                <Text style={[styles.nextUnlockText, { color: '#10b981' }]}>All Pets Unlocked!</Text>
-              </View>
-            )}
           </View>
-        </View>
+        )}
 
         {tasks.length > 0 && (
           <View style={styles.bossBattleBanner}>
@@ -277,13 +281,14 @@ export default function WorkerDashboardScreen() {
           ))
         )}
       </View>
-
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => router.push('/scanner')}
-      >
-        <QrCode color="#fff" size={28} />
-      </TouchableOpacity>
+      {user?.role !== 'admin' && (
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={() => router.push('/scanner')}
+        >
+          <QrCode color="#fff" size={28} />
+        </TouchableOpacity>
+      )}
     </ScrollView>
   );
 }
