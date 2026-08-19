@@ -7,14 +7,18 @@ import { useAuth } from '../context/AuthContext';
 import { Canvas, useFrame } from '@react-three/fiber/native';
 import { useGLTF, useTexture } from '@react-three/drei/native';
 import * as THREE from 'three';
+import { Asset } from 'expo-asset';
 
 const MAX_HP = 100;
 
 function ModelViewer({ modelSource, texSource, scale = 1, position = [0, -1, 0], flip = false }: { modelSource: any, texSource?: any, scale?: number, position?: [number, number, number], flip?: boolean }) {
-    const gltf = useGLTF(modelSource) as any;
+    const resolvedModel = typeof modelSource === 'number' ? Asset.fromModule(modelSource).uri : modelSource;
+    const resolvedTex = typeof texSource === 'number' ? Asset.fromModule(texSource).uri : texSource;
+
+    const gltf = useGLTF(resolvedModel as string) as any;
     const groupRef = useRef<any>(null);
 
-    const texture = texSource ? useTexture(texSource) : null;
+    const texture = resolvedTex ? useTexture(resolvedTex as string) : null;
     if (texture) {
         (texture as any).flipY = false;
         (texture as any).colorSpace = THREE.SRGBColorSpace;
