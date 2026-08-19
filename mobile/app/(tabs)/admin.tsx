@@ -22,6 +22,7 @@ export default function AdminDashboardScreen() {
         rewardCoins: '10',
         rewardXp: '50',
         rewardSp: '0',
+        timeLimitMinutes: '',
         assignedToUserId: '',
         targetRole: '',
         skillPointMap: {} as Record<string, string>
@@ -121,9 +122,10 @@ export default function AdminDashboardScreen() {
                 rewardCoins: parseInt(taskData.rewardCoins) || 0,
                 rewardXp: parseInt(taskData.rewardXp) || 0,
                 rewardSp: parseInt(taskData.rewardSp) || 0,
+                timeLimitMinutes: taskData.timeLimitMinutes ? parseInt(taskData.timeLimitMinutes, 10) : null
             });
             Alert.alert('Success', 'Task Created Successfully');
-            setNewTask({ title: '', description: '', rewardCoins: '10', rewardXp: '50', rewardSp: '0', assignedToUserId: '', targetRole: '', skillPointMap: {} });
+            setNewTask({ title: '', description: '', rewardCoins: '10', rewardXp: '50', rewardSp: '0', timeLimitMinutes: '', assignedToUserId: '', targetRole: '', skillPointMap: {} });
             loadData();
         } catch (err: any) {
             Alert.alert('Error', err.response?.data?.error || err.message);
@@ -231,6 +233,9 @@ export default function AdminDashboardScreen() {
                             <TextInput style={styles.input} keyboardType="numeric" value={newTask.rewardSp} onChangeText={t => setNewTask({ ...newTask, rewardSp: t })} />
                         </View>
                     </View>
+
+                    <Text style={[styles.label, { marginTop: 12 }]}>Time Limit (Minutes, Optional)</Text>
+                    <TextInput style={styles.input} keyboardType="numeric" value={newTask.timeLimitMinutes} onChangeText={t => setNewTask({ ...newTask, timeLimitMinutes: t })} placeholder="e.g. 30" placeholderTextColor="#64748b" />
 
                     <Text style={[styles.label, { marginTop: 16 }]}>Assign Worker (Private Task)</Text>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexDirection: 'row', marginTop: 4 }}>

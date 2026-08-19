@@ -143,6 +143,11 @@ export const completeTask = async (taskId, userId) => {
     return res.data;
 };
 
+export const startTask = async (taskId) => {
+    const res = await api.post(`/tasks/${taskId}/start`);
+    return res.data;
+};
+
 export const submitTask = async (taskId, formData) => {
     // Explicitly use Native fetch() on Android. Axios XHR multipart mapping crashes unexpectedly with Hermers/JSC!
     const token = await AsyncStorage.getItem("token");

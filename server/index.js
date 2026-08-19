@@ -37,7 +37,7 @@ app.use('/api', require('./routes/analytics'));
 app.use('/api/skills', require('./routes/skills'));
 
 // Sync DB and Start Server
-sequelize.sync().then(async () => {
+sequelize.sync({ alter: true }).then(async () => {
     console.log('Database synced');
 
     try {

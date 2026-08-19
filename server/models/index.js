@@ -121,6 +121,9 @@ const Task = sequelize.define('Task', {
         defaultValue: 'pending'
     },
     assignedToUserId: { type: DataTypes.INTEGER, allowNull: true },
+    timeLimitMinutes: { type: DataTypes.INTEGER, allowNull: true },
+    startedAt: { type: DataTypes.DATE, allowNull: true },
+    isGlobal: { type: DataTypes.BOOLEAN, defaultValue: false },
     verificationPhoto: { type: DataTypes.STRING, allowNull: true },
     workerComment: { type: DataTypes.TEXT, allowNull: true },
     adminComment: { type: DataTypes.TEXT, allowNull: true },

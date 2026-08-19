@@ -3,10 +3,10 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import MapView, { Marker } from 'react-native-maps';
 import * as ImagePicker from 'expo-image-picker';
-import { Camera, MapPin, CheckCircle, X, Send } from 'lucide-react-native';
+import { Camera, MapPin, CheckCircle, X, Send, Clock, PlayCircle } from 'lucide-react-native';
 import { schedulePushNotification } from '../../services/notifications';
 
-import { getTaskById, submitTask } from '../../services/api';
+import { getTaskById, submitTask, startTask } from '../../services/api';
 
 export default function TaskDetailModal() {
     const { id } = useLocalSearchParams();
@@ -20,6 +20,9 @@ export default function TaskDetailModal() {
 
     const [comments, setComments] = useState([{ id: 1, user: 'Admin', text: 'Please ensure you check the gears properly.', time: '10:00 AM' }]);
     const [newComment, setNewComment] = useState('');
+    const [starting, setStarting] = useState(false);
+    const [timeLeftStr, setTimeLeftStr] = useState<string | null>(null);
+    const [isExpired, setIsExpired] = useState(false);
 
     useEffect(() => {
         getTaskById(id as string).then(data => {
@@ -30,6 +33,47 @@ export default function TaskDetailModal() {
             router.back();
         });
     }, [id]);
+
+    useEffect(() => {
+        let interval: ReturnType<typeof setInterval>;
+        if (task && task.status === 'in_progress' && task.timeLimitMinutes && task.startedAt) {
+            const timeLimitMs = task.timeLimitMinutes * 60 * 1000;
+            const startTime = new Date(task.startedAt).getTime();
+
+            // Execute immediately once
+            const tick = () => {
+                const elapsed = Date.now() - startTime;
+                const remaining = timeLimitMs - elapsed;
+
+                if (remaining <= 0) {
+                    setTimeLeftStr('00:00');
+                    setIsExpired(true);
+                    clearInterval(interval);
+                } else {
+                    const mins = Math.floor(remaining / 60000);
+                    const secs = Math.floor((remaining % 60000) / 1000);
+                    setTimeLeftStr(`${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`);
+                }
+            };
+            tick();
+            interval = setInterval(tick, 1000);
+        }
+        return () => {
+            if (interval) clearInterval(interval);
+        }
+    }, [task]);
+
+    const handleStartTask = async () => {
+        setStarting(true);
+        try {
+            const updated = await startTask(task.id);
+            setTask(updated.task || updated);
+            setStarting(false);
+        } catch (err: any) {
+            setStarting(false);
+            Alert.alert('Error', err.message || 'Failed to start task');
+        }
+    };
 
     const openCamera = async () => {
         const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
@@ -149,6 +193,15 @@ export default function TaskDetailModal() {
                     </View>
                 </View>
 
+                {timeLeftStr && task.status === 'in_progress' && (
+                    <View style={[styles.timerContainer, isExpired && { backgroundColor: '#7f1d1d' }]}>
+                        <Clock size={20} color={isExpired ? "#fca5a5" : "#fcd34d"} />
+                        <Text style={[styles.timerText, isExpired && { color: "#fca5a5" }]}>
+                            {isExpired ? "Time Expired" : `Time Remaining: ${timeLeftStr}`}
+                        </Text>
+                    </View>
+                )}
+
                 <Text style={styles.sectionTitle}>Description</Text>
                 <Text style={styles.description}>{task.description}</Text>
 
@@ -163,85 +216,105 @@ export default function TaskDetailModal() {
                     <MapView
                         style={styles.map}
                         initialRegion={{
-                            latitude: task.lat,
-                            longitude: task.lng,
+                            latitude: task.lat || 6.9271,
+                            longitude: task.lng || 79.8612,
                             latitudeDelta: 0.005,
                             longitudeDelta: 0.005,
                         }}
                     >
-                        <Marker coordinate={{ latitude: task.lat, longitude: task.lng }} title={task.title} />
+                        {task.lat && <Marker coordinate={{ latitude: task.lat, longitude: task.lng }} title={task.title} />}
                     </MapView>
                 </View>
 
-                {/* Proof of Work */}
-                <Text style={styles.sectionTitle}>Proof of Work</Text>
-                <Text style={styles.helperText}>A photo is required to submit this task for review.</Text>
+                {task.status !== 'pending' && (
+                    <>
+                        <Text style={styles.sectionTitle}>Proof of Work</Text>
+                        <Text style={styles.helperText}>A photo is required to submit this task for review.</Text>
 
-                {imageUri ? (
-                    <View style={styles.imagePreviewContainer}>
-                        <Image source={{ uri: imageUri }} style={styles.previewImage} />
-                        <TouchableOpacity style={styles.retakeButton} onPress={openCamera}>
-                            <Camera size={16} color="#ffffff" style={{ marginRight: 6 }} />
-                            <Text style={styles.btnText}>Retake Photo</Text>
-                        </TouchableOpacity>
-                    </View>
-                ) : (
-                    <TouchableOpacity style={styles.cameraButton} onPress={openCamera}>
-                        <Camera size={24} color="#ffffff" style={{ marginBottom: 8 }} />
-                        <Text style={styles.btnText}>Open Camera</Text>
-                    </TouchableOpacity>
-                )}
-
-                {/* Chat / Comments */}
-                <Text style={[styles.sectionTitle, { marginTop: 32 }]}>Activity & Comments</Text>
-                <View style={styles.chatContainer}>
-                    {comments.map((comment) => (
-                        <View key={comment.id} style={styles.commentBubble}>
-                            <View style={styles.commentHeader}>
-                                <Text style={styles.commentUser}>{comment.user}</Text>
-                                <Text style={styles.commentTime}>{comment.time}</Text>
+                        {imageUri ? (
+                            <View style={styles.imagePreviewContainer}>
+                                <Image source={{ uri: imageUri }} style={styles.previewImage} />
+                                <TouchableOpacity style={styles.retakeButton} onPress={openCamera}>
+                                    <Camera size={16} color="#ffffff" style={{ marginRight: 6 }} />
+                                    <Text style={styles.btnText}>Retake Photo</Text>
+                                </TouchableOpacity>
                             </View>
-                            <Text style={styles.commentText}>{comment.text}</Text>
+                        ) : (
+                            <TouchableOpacity style={styles.cameraButton} onPress={openCamera}>
+                                <Camera size={24} color="#ffffff" style={{ marginBottom: 8 }} />
+                                <Text style={styles.btnText}>Open Camera</Text>
+                            </TouchableOpacity>
+                        )}
+
+                        {/* Chat / Comments */}
+                        <Text style={[styles.sectionTitle, { marginTop: 32 }]}>Activity & Comments</Text>
+                        <View style={styles.chatContainer}>
+                            {comments.map((comment) => (
+                                <View key={comment.id} style={styles.commentBubble}>
+                                    <View style={styles.commentHeader}>
+                                        <Text style={styles.commentUser}>{comment.user}</Text>
+                                        <Text style={styles.commentTime}>{comment.time}</Text>
+                                    </View>
+                                    <Text style={styles.commentText}>{comment.text}</Text>
+                                </View>
+                            ))}
+                            <View style={styles.chatInputContainer}>
+                                <TextInput
+                                    style={styles.chatInput}
+                                    placeholder="Ask a question..."
+                                    placeholderTextColor="#9ca3af"
+                                    value={newComment}
+                                    onChangeText={setNewComment}
+                                />
+                                <TouchableOpacity
+                                    style={styles.sendButton}
+                                    onPress={() => {
+                                        if (newComment) {
+                                            setComments([...comments, { id: Date.now(), user: 'You', text: newComment, time: 'Now' }]);
+                                            setNewComment('');
+                                        }
+                                    }}
+                                >
+                                    <Send size={20} color="#fff" />
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                    ))}
-                    <View style={styles.chatInputContainer}>
-                        <TextInput
-                            style={styles.chatInput}
-                            placeholder="Ask a question..."
-                            placeholderTextColor="#9ca3af"
-                            value={newComment}
-                            onChangeText={setNewComment}
-                        />
-                        <TouchableOpacity
-                            style={styles.sendButton}
-                            onPress={() => {
-                                if (newComment) {
-                                    setComments([...comments, { id: Date.now(), user: 'You', text: newComment, time: 'Now' }]);
-                                    setNewComment('');
-                                }
-                            }}
-                        >
-                            <Send size={20} color="#fff" />
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                    </>
+                )}
             </ScrollView>
 
             <View style={styles.footer}>
-                <TouchableOpacity
-                    style={[styles.submitButton, (!imageUri || submitting) && { opacity: 0.5 }]}
-                    onPress={handleSubmit}
-                    disabled={!imageUri || submitting}
-                >
-                    {submitting ? (
-                        <ActivityIndicator color="#fff" />
-                    ) : (
-                        <>
-                            <CheckCircle size={20} color="#ffffff" style={{ marginRight: 8 }} />
-                            <Text style={styles.submitBtnText}>Submit Task</Text>
-                        </>
-                    )}
-                </TouchableOpacity>
+                {task.status === 'pending' ? (
+                    <TouchableOpacity
+                        style={[styles.submitButton, { backgroundColor: '#10b981' }, starting && { opacity: 0.5 }]}
+                        onPress={handleStartTask}
+                        disabled={starting}
+                    >
+                        {starting ? (
+                            <ActivityIndicator color="#fff" />
+                        ) : (
+                            <>
+                                <PlayCircle size={20} color="#ffffff" style={{ marginRight: 8 }} />
+                                <Text style={styles.submitBtnText}>Start Task</Text>
+                            </>
+                        )}
+                    </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity
+                        style={[styles.submitButton, (!imageUri || submitting || isExpired) && { opacity: 0.5 }]}
+                        onPress={handleSubmit}
+                        disabled={!imageUri || submitting || isExpired}
+                    >
+                        {submitting ? (
+                            <ActivityIndicator color="#fff" />
+                        ) : (
+                            <>
+                                <CheckCircle size={20} color="#ffffff" style={{ marginRight: 8 }} />
+                                <Text style={styles.submitBtnText}>{isExpired ? "Time Expired" : "Submit Task"}</Text>
+                            </>
+                        )}
+                    </TouchableOpacity>
+                )}
             </View>
 
             {/* Victory Overlay Screen */}
@@ -260,6 +333,22 @@ export default function TaskDetailModal() {
 }
 
 const styles = StyleSheet.create({
+    timerContainer: {
+        backgroundColor: '#78350f',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 16,
+        borderRadius: 16,
+        marginBottom: 16,
+        marginTop: 8,
+    },
+    timerText: {
+        color: '#fcd34d',
+        fontWeight: '900',
+        fontSize: 18,
+        marginLeft: 10,
+    },
     loadingContainer: {
         flex: 1,
         backgroundColor: '#0f172a',
