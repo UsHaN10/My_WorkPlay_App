@@ -1,7 +1,6 @@
 declare module '*.js' {
     const value: any;
     export default value;
-    export * from '*.js';
 }
 
 declare module '*/services/api' {
