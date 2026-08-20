@@ -228,10 +228,6 @@ export default function AdminDashboardScreen() {
                             <Text style={styles.label}>XP *</Text>
                             <TextInput style={styles.input} keyboardType="numeric" value={newTask.rewardXp} onChangeText={t => setNewTask({ ...newTask, rewardXp: t })} />
                         </View>
-                        <View style={{ flex: 1 }}>
-                            <Text style={styles.label}>SP</Text>
-                            <TextInput style={styles.input} keyboardType="numeric" value={newTask.rewardSp} onChangeText={t => setNewTask({ ...newTask, rewardSp: t })} />
-                        </View>
                     </View>
 
                     <Text style={[styles.label, { marginTop: 12 }]}>Time Limit (Minutes, Optional)</Text>

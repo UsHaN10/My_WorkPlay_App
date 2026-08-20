@@ -253,41 +253,45 @@ export default function WorkerDashboardScreen() {
           </View>
         )}
 
-        <Text style={styles.sectionTitle}>Your Active Tasks</Text>
-        {activeTasks.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyStateText}>No active tasks right now.</Text>
-          </View>
-        ) : (
-          activeTasks.map((task: any) => {
-            const isTakenBySomeoneElse = task.isGlobal && task.assignedToUserId && task.assignedToUserId !== user?.id;
-            return (
-              <View key={task.id} style={[styles.taskCard, isTakenBySomeoneElse && { opacity: 0.5 }]}>
-                <View style={styles.taskHeader}>
-                  <Text style={styles.taskTitle}>{task.title}</Text>
-                  <View style={styles.rewardBadge}>
-                    <Text style={styles.rewardText}>+{task.rewardCoins || task.rewardPoints || 0} pts</Text>
-                  </View>
-                </View>
-                <Text style={styles.taskDescription}>{task.description}</Text>
-                {task.location && (
-                  <View style={styles.locationRow}>
-                    <MapPin size={16} color="#9ca3af" />
-                    <Text style={styles.locationText}>{task.location}</Text>
-                  </View>
-                )}
-                {isTakenBySomeoneElse ? (
-                  <View style={[styles.actionButton, { backgroundColor: '#475569' }]}>
-                    <Text style={styles.actionButtonText}>In Progress by another worker</Text>
-                  </View>
-                ) : (
-                  <TouchableOpacity style={styles.actionButton} onPress={() => router.push(`/task/${task.id}`)}>
-                    <Text style={styles.actionButtonText}>{task.status === 'pending' ? 'View Details / Start' : 'View Details / Submit'}</Text>
-                  </TouchableOpacity>
-                )}
+        {user?.role !== 'admin' && (
+          <>
+            <Text style={styles.sectionTitle}>Your Active Tasks</Text>
+            {activeTasks.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyStateText}>No active tasks right now.</Text>
               </View>
-            );
-          })
+            ) : (
+              activeTasks.map((task: any) => {
+                const isTakenBySomeoneElse = task.isGlobal && task.assignedToUserId && task.assignedToUserId !== user?.id;
+                return (
+                  <View key={task.id} style={[styles.taskCard, isTakenBySomeoneElse && { opacity: 0.5 }]}>
+                    <View style={styles.taskHeader}>
+                      <Text style={styles.taskTitle}>{task.title}</Text>
+                      <View style={styles.rewardBadge}>
+                        <Text style={styles.rewardText}>+{task.rewardCoins || task.rewardPoints || 0} pts</Text>
+                      </View>
+                    </View>
+                    <Text style={styles.taskDescription}>{task.description}</Text>
+                    {task.location && (
+                      <View style={styles.locationRow}>
+                        <MapPin size={16} color="#9ca3af" />
+                        <Text style={styles.locationText}>{task.location}</Text>
+                      </View>
+                    )}
+                    {isTakenBySomeoneElse ? (
+                      <View style={[styles.actionButton, { backgroundColor: '#475569' }]}>
+                        <Text style={styles.actionButtonText}>In Progress by another worker</Text>
+                      </View>
+                    ) : (
+                      <TouchableOpacity style={styles.actionButton} onPress={() => router.push(`/task/${task.id}`)}>
+                        <Text style={styles.actionButtonText}>{task.status === 'pending' ? 'View Details / Start' : 'View Details / Submit'}</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                );
+              })
+            )}
+          </>
         )}
       </View>
       {user?.role !== 'admin' && (

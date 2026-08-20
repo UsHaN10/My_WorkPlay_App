@@ -91,9 +91,6 @@ export default function LeaderboardScreen() {
                     )}
                 </View>
             </ScrollView>
-            <TouchableOpacity style={styles.pvpFab} onPress={() => router.push('/matchmaking?gameType=arena')}>
-                <Swords size={32} color="#ffffff" />
-            </TouchableOpacity>
         </View>
     );
 }
@@ -211,21 +208,5 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 40,
         fontSize: 16,
-    },
-    pvpFab: {
-        position: 'absolute',
-        bottom: 24,
-        right: 24,
-        backgroundColor: '#ef4444',
-        width: 64,
-        height: 64,
-        borderRadius: 32,
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: '#ef4444',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.5,
-        shadowRadius: 10,
-        elevation: 8,
     }
 });
